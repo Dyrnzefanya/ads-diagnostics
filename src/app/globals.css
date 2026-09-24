@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #0b1220;
+  --color-panel: #111a2e;
+  --color-panel2: #172440;
+  --color-line: #263654;
+  --color-fg: #e8eef8;
+  --color-dim: #9fb0cc;
+  --color-teal: #2dd4bf;
+  --color-amber: #fbbf24;
+  --color-rose: #fb7185;
+  --color-slate: #94a3b8;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--color-navy); color: var(--color-fg); font-family: var(--font-sans); }
+
+:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}
+
+/* Cetak / PDF: paksa terang, sembunyikan form dan navigasi, sisakan hasil. */
+@media print {
+  :root {
+    --color-navy: #fff; --color-panel: #fff; --color-panel2: #f3f5f9; --color-line: #cbd5e1;
+    --color-fg: #0f172a; --color-dim: #475569; --color-teal: #0f766e; --color-amber: #b45309; --color-rose: #b91c1c;
+  }
+  .no-print { display: none !important; }
+  body { background: #fff; }
+}
