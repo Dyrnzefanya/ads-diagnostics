@@ -24,11 +24,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="id" className={jakarta.variable}>
       <body className="min-h-dvh antialiased">
         <header className="no-print border-b border-line">
-          <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3" aria-label="Utama">
+          <nav className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3" aria-label="Utama">
             <Link href="/" className="font-bold tracking-tight">
               Ads<span className="text-teal">Diagnostic</span>
             </Link>
-            <ul className="flex gap-1 text-sm">
+            <ul className="flex flex-wrap gap-1 text-sm">
               {NAV.map((n) => (
                 <li key={n.href}>
                   <Link href={n.href} className="rounded-md px-3 py-2 text-dim hover:bg-panel hover:text-fg">
