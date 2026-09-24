@@ -3,7 +3,7 @@ import type { Economics, Eco, Metrics, PathConfig, ResolvedPreset, Tier } from '
 /** Target biaya akuisisi = 33% dari batas impas (Ads Calculator Jordan). */
 export const TARGET = 0.33;
 
-const KEYS = {
+export const ECONOMICS_KEYS = {
   sales: ['price', 'cost', 'conversionValue'],
   lead: ['dealValue', 'dealCost', 'validRate', 'closeRate'],
   app: ['valuePerResult'],
@@ -14,7 +14,7 @@ const KEYS = {
 export function sanitizeEconomics(cfg: PathConfig, e?: Economics): Economics | undefined {
   if (!e) return undefined;
   const out: Economics = {};
-  for (const k of KEYS[cfg.economics]) if (e[k] != null) out[k] = e[k];
+  for (const k of ECONOMICS_KEYS[cfg.economics]) if (e[k] != null) out[k] = e[k];
   return Object.keys(out).length ? out : undefined;
 }
 

@@ -29,7 +29,7 @@ export function ShareExport({ target, fileName }: Props) {
     setBusy(true);
     try {
       const { toPng } = await import('html-to-image');
-      const url = await toPng(target.current, { pixelRatio: 2, backgroundColor: '#0b1220', cacheBust: true });
+      const url = await toPng(target.current, { pixelRatio: 2, backgroundColor: '#0b1220', cacheBust: true, filter: (n) => !(n instanceof HTMLElement && n.classList.contains('no-print')) });
       const a = document.createElement('a');
       a.href = url;
       a.download = `${fileName}.png`;

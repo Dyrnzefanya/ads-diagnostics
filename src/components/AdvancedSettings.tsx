@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { PATHS, stagesFor } from '@/config/meta/paths';
 import { PRESETS, resolvePreset, type ThOverrides } from '@/config/meta/thresholds';
 import { fmtNum, parseID } from '@/lib/format';
@@ -14,8 +15,13 @@ interface Props {
 export function AdvancedSettings({ form, onPreset, onOverrides }: Props) {
   const preset = resolvePreset(form.presetId);
   const stages = stagesFor(PATHS[form.pathId], form.level, {});
-  const setOne = (key: string, side: 'sehat' | 'kritis', raw: string) => {
-    const n = parseID(raw);
+  const [raw, setRaw] = useState<Record<string, string>>({});
+  const shown = (key: string, side: 'sehat' | 'kritis') =>
+    raw[`${key}.${side}`] ?? (form.overrides[key]?.[side] != null ? String(form.overrides[key]![side]).replace('.', ',') : '');
+  const setOne = (key: string, side: 'sehat' | 'kritis', text: string) => {
+    setRaw((r) => ({ ...r, [`${key}.${side}`]: text }));
+    const n = parseID(text);
+    if (text.trim() !== '' && n == null) return; // belum lengkap, mis. "0,": biarkan override tersimpan
     const next = { ...form.overrides, [key]: { ...form.overrides[key] } };
     if (n == null) delete next[key][side]; else next[key][side] = n;
     if (!Object.keys(next[key]).length) delete next[key];
@@ -46,12 +52,12 @@ export function AdvancedSettings({ form, onPreset, onOverrides }: Props) {
                   <span className="w-40 shrink-0">{label}</span>
                   <label className="flex items-center gap-1 text-dim">Sehat
                     <input aria-label={`${label} batas sehat`} className={input} inputMode="decimal" placeholder={fmtNum(t.sehat, 2)}
-                      value={form.overrides[key]?.sehat != null ? String(form.overrides[key]!.sehat).replace('.', ',') : ''}
+                      value={shown(key, 'sehat')}
                       onChange={(e) => setOne(key, 'sehat', e.target.value)} />
                   </label>
                   <label className="flex items-center gap-1 text-dim">Kritis
                     <input aria-label={`${label} batas kritis`} className={input} inputMode="decimal" placeholder={fmtNum(t.kritis, 2)}
-                      value={form.overrides[key]?.kritis != null ? String(form.overrides[key]!.kritis).replace('.', ',') : ''}
+                      value={shown(key, 'kritis')}
                       onChange={(e) => setOne(key, 'kritis', e.target.value)} />
                   </label>
                 </div>
@@ -59,7 +65,7 @@ export function AdvancedSettings({ form, onPreset, onOverrides }: Props) {
             })}
           </div>
           {Object.keys(form.overrides).length > 0 && (
-            <button type="button" onClick={() => onOverrides({})} className="mt-3 text-sm text-teal underline underline-offset-2">Reset semua override</button>
+            <button type="button" onClick={() => { setRaw({}); onOverrides({}); }} className="mt-3 text-sm text-teal underline underline-offset-2">Reset semua override</button>
           )}
         </div>
       </div>

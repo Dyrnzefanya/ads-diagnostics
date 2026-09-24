@@ -58,7 +58,7 @@ const card = 'rounded-2xl border border-line bg-panel p-5';
 export function ResultView({ r, levelLabel }: { r: DiagnosisResult; levelLabel?: string }) {
   if (r.code === 'invalid') {
     return (
-      <section className={`${card} border-slate/50`} aria-live="polite">
+      <section className={`${card} border-slate/50`}>
         <p className="text-xs font-semibold tracking-wide text-slate">{r.kondisi}</p>
         <h2 className="mt-1 text-2xl font-extrabold">{r.label}</h2>
         <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-rose">
@@ -70,7 +70,7 @@ export function ResultView({ r, levelLabel }: { r: DiagnosisResult; levelLabel?:
   }
   const tone = TONE[r.kondisi];
   return (
-    <div className="space-y-4" aria-live="polite">
+    <div className="space-y-4">
       <section className={`rounded-2xl border p-5 ${tone.border} ${tone.bg}`}>
         <p className={`text-xs font-semibold tracking-wide ${tone.text}`}>
           {r.kondisi}{levelLabel ? ` · ${levelLabel}` : ''}{r.confidence ? ` · Keyakinan ${r.confidence}` : ''}

@@ -33,6 +33,7 @@ export function NumberField({ id, label, hint, value, onChange, required, error,
           placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={!!error}
+          aria-required={required || undefined}
           aria-describedby={`${id}-d`}
           className={`w-full rounded-lg border bg-navy px-3 py-2.5 text-base tabular-nums placeholder:text-dim/60 ${
             error ? 'border-rose' : 'border-line focus:border-teal'

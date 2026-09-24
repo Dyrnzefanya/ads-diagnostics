@@ -1,6 +1,7 @@
 import { fieldsFor, PATHS } from '../config/meta/paths';
 import type { ThOverrides } from '../config/meta/thresholds';
 import type { DiagnosisInput, Economics, Level, MetricKey } from '../engine/types';
+import { ECONOMICS_KEYS } from '../engine/economics';
 import { parseID } from './format';
 
 /** State form = string mentah dari input, supaya "1.250" atau "12," tidak rusak saat diketik. */
@@ -38,14 +39,17 @@ export function parseForm(f: FormState): { input: DiagnosisInput; bad: string[] 
     if (n == null) bad.push(id);
     return n ?? undefined;
   };
+  if (!Object.hasOwn(PATHS, f.pathId)) return { input: { pathId: f.pathId, level: f.level, days: NaN, metrics: {} }, bad: [] };
+  const cfg = PATHS[f.pathId];
+  const { required, optional } = fieldsFor(cfg, f.level);
   const metrics: DiagnosisInput['metrics'] = {};
-  for (const [k, v] of Object.entries(f.metrics) as [MetricKey, string][]) {
-    const n = num(v, k);
+  for (const k of [...required, ...optional]) {
+    const n = num(f.metrics[k], k);
     if (n != null) metrics[k] = n;
   }
   const economics: Economics = {};
-  for (const [k, v] of Object.entries(f.eco) as [keyof Economics, string][]) {
-    const n = num(v, k);
+  for (const k of ECONOMICS_KEYS[cfg.economics] as readonly (keyof Economics)[]) {
+    const n = num(f.eco[k], k);
     if (n != null) economics[k] = n;
   }
   const days = num(f.days, 'days');

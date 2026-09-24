@@ -23,7 +23,7 @@ const h2 = 'mb-4 text-lg font-bold';
 
 export function DiagnosisApp() {
   const [form, setForm] = useState<FormState>(emptyForm);
-  const [result, setResult] = useState<DiagnosisResult | null>(null);
+  const [result, setResult] = useState<{ r: DiagnosisResult; pathId: string; level: Level; days: number } | null>(null);
   const [notice, setNotice] = useState('');
   const [sampleIdx, setSampleIdx] = useState(0);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -31,7 +31,7 @@ export function DiagnosisApp() {
   const run = (f: FormState, save: boolean) => {
     const { input } = parseForm(f);
     const r = diagnose(input, resolvePreset(f.presetId, f.overrides));
-    setResult(r);
+    setResult({ r, pathId: f.pathId, level: f.level, days: input.days });
     const state = encodeState({ input, presetId: f.presetId, overrides: f.overrides });
     window.history.replaceState(null, '', `?s=${state}`);
     if (save && r.code !== 'invalid') {
@@ -90,6 +90,8 @@ export function DiagnosisApp() {
     window.history.replaceState(null, '', window.location.pathname);
   };
 
+  const levelLabel = result ? LEVELS.find((l) => l.id === result.level)?.label : undefined;
+
   return (
     <main className="mx-auto max-w-3xl space-y-6 px-4 py-8">
       <div className="no-print flex flex-wrap items-end justify-between gap-3">
@@ -101,7 +103,9 @@ export function DiagnosisApp() {
           Coba Skenario
         </button>
       </div>
-      {notice && <p role="status" className="no-print rounded-lg border border-line bg-panel2 px-4 py-2 text-sm text-dim">{notice}</p>}
+      <div role="status" className="no-print">
+        {notice && <p className="rounded-lg border border-line bg-panel2 px-4 py-2 text-sm text-dim">{notice}</p>}
+      </div>
 
       <div className="no-print space-y-6">
         <section className={card} aria-labelledby="h-konteks">
@@ -143,16 +147,16 @@ export function DiagnosisApp() {
         </div>
       </div>
 
-      <div id="hasil" ref={resultRef} className="scroll-mt-4 space-y-4">
+      <div id="hasil" ref={resultRef} aria-live="polite" className="scroll-mt-4 space-y-4">
         {result && (
           <>
             <div className="space-y-4 bg-navy">
               <p className="text-sm text-dim">
-                {PATHS[form.pathId].label} · {LEVELS.find((l) => l.id === form.level)?.label} · {input.days} hari
+                {PATHS[result.pathId].label} · {levelLabel} · {result.days} hari
               </p>
-              <ResultView r={result} levelLabel={LEVELS.find((l) => l.id === form.level)?.label} />
+              <ResultView r={result.r} levelLabel={levelLabel} />
             </div>
-            {result.code !== 'invalid' && <ShareExport target={resultRef} fileName={`diagnosis-${form.pathId}-${form.level}`} />}
+            {result.r.code !== 'invalid' && <ShareExport target={resultRef} fileName={`diagnosis-${result.pathId}-${result.level}`} />}
           </>
         )}
       </div>
