@@ -44,5 +44,9 @@ export function addHistory(e: Omit<HistoryEntry, 'id' | 'at'>): void {
 export const removeHistory = (id: string) => write(HISTORY_KEY, loadHistory().filter((h) => h.id !== id));
 export const clearHistory = () => write(HISTORY_KEY, []);
 
-export const loadSettings = (): Settings => read<Settings>(SETTINGS_KEY, { presetId: 'ecommerce', overrides: {} });
+export function loadSettings(): Settings {
+  const s = read<unknown>(SETTINGS_KEY, null) as Settings | null;
+  const ok = typeof s === 'object' && s !== null && typeof s.presetId === 'string' && typeof s.overrides === 'object' && s.overrides !== null;
+  return ok ? s : { presetId: 'ecommerce', overrides: {} };
+}
 export const saveSettings = (s: Settings) => write(SETTINGS_KEY, s);

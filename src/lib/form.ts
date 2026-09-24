@@ -18,7 +18,7 @@ export const emptyForm = (): FormState => ({
   pathId: 'sales_website', level: 'campaign', days: '', metrics: {}, eco: {}, presetId: 'ecommerce', overrides: {},
 });
 
-const toStr = (n: number) => String(n).replace('.', ',');
+const toStr = (n: number) => (Number.isFinite(n) ? String(n) : '').replace('.', ',');
 
 export function fromInput(input: DiagnosisInput, presetId: string, overrides: ThOverrides): FormState {
   const strs = <T extends string>(o: Partial<Record<T, number>> | undefined) =>
@@ -57,7 +57,7 @@ export function parseForm(f: FormState): { input: DiagnosisInput; bad: string[] 
 
 /** Field wajib (termasuk hari berjalan) yang masih kosong. */
 export function missingRequired(f: FormState): string[] {
-  const cfg = PATHS[f.pathId];
+  const cfg = Object.hasOwn(PATHS, f.pathId) ? PATHS[f.pathId] : undefined;
   if (!cfg) return ['pathId'];
   const empty = (s?: string) => s == null || s.trim() === '';
   const missing = fieldsFor(cfg, f.level).required.filter((k) => empty(f.metrics[k]));

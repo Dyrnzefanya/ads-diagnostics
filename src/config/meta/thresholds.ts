@@ -61,6 +61,13 @@ export type ThOverrides = Record<string, Partial<Pick<Th, 'sehat' | 'kritis'>>>;
 export function resolvePreset(id: string, user: ThOverrides = {}): ResolvedPreset {
   const p = PRESETS.find((x) => x.id === id) ?? PRESETS[0];
   const th: ThMap = {};
-  for (const k of Object.keys(BASE_TH)) th[k] = { ...BASE_TH[k], ...p.overrides[k], ...user[k] };
+  for (const k of Object.keys(BASE_TH)) {
+    th[k] = { ...BASE_TH[k], ...p.overrides[k] };
+    const u = Object.hasOwn(user, k) ? user[k] : undefined; // hanya sehat/kritis numerik dari link/pengguna
+    for (const f of ['sehat', 'kritis'] as const) {
+      const v = u?.[f];
+      if (typeof v === 'number' && Number.isFinite(v)) th[k][f] = v;
+    }
+  }
   return { id: p.id, th, validRate: p.validRate, closeRate: p.closeRate };
 }

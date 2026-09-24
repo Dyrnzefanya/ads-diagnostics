@@ -15,7 +15,7 @@ export function decideBase(c: Ctx): Decision {
 
   if (tier === 'rugi') return { code: confidence === 'rendah' ? 'test_limited' : 'pause' };
   if (tier === 'tipis') {
-    const stage = kritis ?? weakestStage(f);
+    const stage = kritis ?? weakestStage(f.filter((s) => s.status !== 'sehat'));
     return { code: 'fix', tag: stage?.tag ?? 'OFFER & HARGA', stage };
   }
   if (kritis) return { code: 'fix', tag: kritis.tag, stage: kritis };

@@ -19,7 +19,7 @@ function isState(s: unknown): s is SharedState {
   const x = s as SharedState;
   const i = x?.input;
   return (
-    !!i && typeof i.pathId === 'string' && i.pathId in PATHS &&
+    !!i && typeof i.pathId === 'string' && Object.hasOwn(PATHS, i.pathId) &&
     ['campaign', 'adset', 'ad'].includes(i.level) &&
     (i.days === null || typeof i.days === 'number') && isNumRecord(i.metrics) &&
     (i.economics === undefined || isNumRecord(i.economics)) &&

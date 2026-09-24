@@ -63,7 +63,7 @@ function invalid(errors: string[]): DiagnosisResult {
 
 /** Diagnosis murni: input + preset → hasil. Tanpa side effect. */
 export function diagnose(input: DiagnosisInput, preset: ResolvedPreset): DiagnosisResult {
-  const cfg = PATHS[input.pathId];
+  const cfg = Object.hasOwn(PATHS, input.pathId) ? PATHS[input.pathId] : undefined;
   if (!cfg) return invalid(['Result path tidak dikenal.']);
 
   const m = sanitize(input.metrics, cfg, input.level);
